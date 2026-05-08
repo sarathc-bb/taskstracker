@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tasks</title>
+<style>
+  :root {
+    /* Surfaces */
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --surface-soft: #f8fafc;
+
+    /* Lines */
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+
+    /* Text */
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+
+    /* Accents */
+    --accent: #4338ca;
+    --accent-hover: #3730a3;
+    --accent-soft: #eef2ff;
+    --accent-border: #c7d2fe;
+
+    --success: #059669;
+    --success-soft: #ecfdf5;
+    --success-border: #a7f3d0;
+
+    --warning: #d97706;
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow: 0 4px 6px -1px rgba(15,23,42,0.06), 0 2px 4px -2px rgba(15,23,42,0.04);
+    --shadow-lg: 0 20px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: 40px 20px;
+  }
+
+  /* ---------- Sign-in screen ---------- */
+  .auth-wrap {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    padding: 40px 36px;
+    text-align: center;
+    max-width: 420px;
+    width: 100%;
+  }
+
+  .auth-card .logo {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    color: #fff;
+    font-size: 26px;
+  }
+
+  .auth-card h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  .auth-card p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .google-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 20px;
+    background: #fff;
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+
+  .google-btn:hover { background: var(--surface-soft); border-color: var(--text-muted); }
+
+  .google-btn svg { width: 18px; height: 18px; }
+
+  .auth-error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 14px;
+    min-height: 18px;
+  }
+
+  /* ---------- Main app ---------- */
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* Header */
+  header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
+  }
+
+  .title-block h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  .title-block .date {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+
+  .user-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .sync-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: var(--surface);
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+
+  .sync-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 2px var(--success-soft);
+  }
+
+  .sync-badge.syncing .sync-dot { background: var(--warning); animation: pulse 1.2s ease-in-out infinite; }
+  .sync-badge.offline .sync-dot { background: var(--text-muted); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid var(--accent-border);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .menu-wrap { position: relative; }
+
+  .menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    min-width: 200px;
+    padding: 6px;
+    display: none;
+    z-index: 10;
+  }
+
+  .menu.open { display: block; }
+
+  .menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .menu-item:hover { background: var(--accent-soft); }
+
+  .menu-info {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+
+  .menu-info .name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .menu-info .email { font-size: 11px; color: var(--text-secondary); margin-top: 1px; word-break: break-all; }
+
+  /* New section bar */
+  .new-section-bar {
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .new-section-toggle {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+    font-family: inherit;
+  }
+
+  .new-section-toggle:hover { color: var(--accent-hover); }
+
+  .new-section-toggle .plus {
+    width: 18px; height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 5px;
+    font-weight: 600;
+    line-height: 1;
+    border: 1px solid var(--accent-border);
+  }
+
+  .new-section-form {
+    display: none;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .new-section-form.open { display: flex; }
+  .new-section-bar.open .new-section-toggle { display: none; }
+
+  .input-clean {
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .input-clean:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(67,56,202,0.12);
+  }
+
+  .new-section-form .input-clean { flex: 1; }
+
+  .btn {
+    padding: 9px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-family: inherit;
+    transition: all 0.15s;
+    line-height: 1.2;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border-strong);
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--text-muted); }
+
+  /* Pane */
+  .pane { padding: 24px 32px; }
+  .pane + .pane { border-top: 1px solid var(--border); background: var(--surface-soft); }
+
+  .pane-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .pane-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pane-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  #doneTitle .dot { background: var(--success); }
+
+  .pane-actions {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    font-family: inherit;
+    transition: color 0.15s;
+  }
+
+  .link-btn:hover { color: var(--danger); }
+
+  /* Section card */
+  .section-card { margin-bottom: 22px; }
+  .section-card:last-child { margin-bottom: 0; }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 0 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+  }
+
+  .section-marker {
+    width: 4px; height: 18px;
+    border-radius: 3px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .section-card.is-done .section-marker { background: var(--success); }
+
+  .section-name {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 5px 8px;
+    margin-left: -8px;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.15s;
+    font-family: inherit;
+    letter-spacing: -0.005em;
+  }
+
+  .section-name:hover { background: var(--accent-soft); }
+  .section-name:focus { background: var(--surface); border-color: var(--accent-border); box-shadow: 0 0 0 3px rgba(67,56,202,0.08); }
+
+  .section-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 7px;
+    border-radius: 5px;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.15s;
+    opacity: 0;
+  }
+
+  .section-head:hover .icon-btn,
+  .task-item:hover .icon-btn { opacity: 1; }
+
+  .icon-btn:hover { color: var(--danger); background: var(--danger-soft); }
+
+  /* Task list */
+  .task-list { list-style: none; }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 10px;
+    margin: 0 -10px;
+    border-radius: 7px;
+    transition: background 0.12s;
+    border-left: 2px solid transparent;
+  }
+
+  .task-item:hover { background: var(--accent-soft); }
+
+  .task-item.done {
+    background: var(--success-soft);
+    border-left-color: var(--success);
+  }
+
+  .task-item.done .task-text { text-decoration: line-through; color: var(--text-muted); }
+
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 5px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    background: var(--surface);
+  }
+
+  .checkbox:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+  .checkbox.checked {
+    background: var(--success);
+    border-color: var(--success);
+  }
+
+  .checkbox.checked::after {
+    content: "";
+    width: 4px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-0.5px, -1.5px);
+  }
+
+  .task-text {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text);
+    word-break: break-word;
+  }
+
+  .task-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .task-item.done .task-meta { color: var(--success); font-weight: 500; }
+
+  /* Inline add task */
+  .add-task-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 8px 8px;
+    margin: 6px -8px 0;
+    border-radius: 6px;
+    transition: all 0.12s;
+    font-family: inherit;
+  }
+
+  .add-task-trigger:hover { color: var(--accent); background: var(--accent-soft); }
+  .add-task-trigger .plus-sm { font-size: 14px; line-height: 1; }
+
+  .add-task-form {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0 4px;
+  }
+
+  .add-task-form.open { display: flex; }
+  .section-card.adding .add-task-trigger { display: none; }
+
+  .add-task-form .input-clean { flex: 1; }
+
+  /* Empty states */
+  .empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 32px 0;
+    background: var(--surface-soft);
+    border: 1px dashed var(--border-strong);
+    border-radius: 10px;
+  }
+
+  .empty-tasks {
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 8px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 14px 32px;
+    color: var(--text-muted);
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    letter-spacing: 0.02em;
+    background: var(--surface-soft);
+  }
+
+  .loading-screen {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .config-warning {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    color: #78350f;
+    padding: 16px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 80px auto;
+  }
+
+  .config-warning code {
+    background: #fef9c3;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    body { padding: 0; }
+    .container { border-radius: 0; border-left: none; border-right: none; border-top: none; min-height: 100vh; }
+    header { padding: 18px 20px; flex-wrap: wrap; }
+    .new-section-bar, .pane, footer { padding-left: 20px; padding-right: 20px; }
+    .title-block h1 { font-size: 18px; }
+    .pane { padding-top: 18px; padding-bottom: 18px; }
+    .add-task-form { flex-wrap: wrap; }
+    .add-task-form .input-clean { min-width: 0; }
+    .auth-card { margin: 20px; padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sign-in screen -->
+<div id="authScreen" class="auth-wrap" style="display:none;">
+  <div class="auth-card">
+    <div class="logo">✓</div>
+    <h1>Tasks</h1>
+    <p>Sign in to access your tasks on any device</p>
+    <button class="google-btn" id="signInBtn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Sign in with Google
+    </button>
+    <div class="auth-error" id="authError"></div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loadingScreen" class="loading-screen">
+  <span class="spinner"></span> Loading…
+</div>
+
+<!-- Config warning shown if Firebase not configured -->
+<div id="configWarning" class="config-warning" style="display:none;">
+  <strong>Setup needed.</strong> This file isn't configured to connect to Firebase yet. Open <code>todo.html</code> in a text editor and replace the <code>firebaseConfig</code> object near the bottom of the file with the one from your Firebase project.
+</div>
+
+<!-- Main app -->
+<div id="app" class="container" style="display:none;">
+  <header>
+    <div class="title-block">
+      <h1>Tasks</h1>
+      <div class="date" id="todayDate"></div>
+    </div>
+    <div class="user-block">
+      <span class="sync-badge" id="syncBadge"><span class="sync-dot"></span><span id="syncText">Synced</span></span>
+      <div class="menu-wrap">
+        <div class="avatar" id="avatar" title="Account"></div>
+        <div class="menu" id="userMenu">
+          <div class="menu-info">
+            <div class="name" id="menuName"></div>
+            <div class="email" id="menuEmail"></div>
+          </div>
+          <button class="menu-item" id="signOutBtn">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="new-section-bar" id="newSectionBar">
+    <button class="new-section-toggle" id="newSectionToggle">
+      <span class="plus">+</span>
+      <span>New section</span>
+    </button>
+    <div class="new-section-form" id="newSectionForm">
+      <input type="text" class="input-clean" id="newSectionInput" placeholder="Section name (e.g. May 8, Work, Errands)" autocomplete="off" />
+      <button class="btn btn-primary" id="addSectionBtn">Add</button>
+      <button class="btn btn-ghost" id="cancelSectionBtn">Cancel</button>
+    </div>
+  </div>
+
+  <div class="pane">
+    <div class="pane-head">
+      <span class="pane-title"><span class="dot"></span>Active</span>
+      <div class="pane-actions"><span id="activeCount">0 tasks</span></div>
+    </div>
+    <div id="activeSections"></div>
+  </div>
+
+  <div class="pane">
+    <div class="pane-head">
+      <span class="pane-title" id="doneTitle"><span class="dot"></span>History</span>
+      <div class="pane-actions">
+        <span id="doneCount">0 tasks</span>
+        <button class="link-btn" id="clearDoneBtn" title="Delete all completed tasks">Clear all</button>
+      </div>
+    </div>
+    <div id="doneSections"></div>
+  </div>
+
+  <footer>Synced via Firebase · <span id="footerEmail"></span></footer>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
+  import {
+    getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
+    onSnapshot, query, writeBatch, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+  // ============================================================
+  // PASTE YOUR FIREBASE CONFIG HERE
+  // ============================================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyB_U5FMuxdie7ynebUWu1JhuJg-ftj9Yro",
+    authDomain: "tasks-tracker-50661.firebaseapp.com",
+    projectId: "tasks-tracker-50661",
+    storageBucket: "tasks-tracker-50661.firebasestorage.app",
+    messagingSenderId: "263049073107",
+    appId: "1:263049073107:web:dc017a47347a41a7e69f26"
+  };
+  // ============================================================
+
+  const $ = (id) => document.getElementById(id);
+
+  // Detect unconfigured state
+  const configured = firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY";
+  if (!configured) {
+    $("loadingScreen").style.display = "none";
+    $("configWarning").style.display = "block";
+  } else {
+    initApp();
+  }
+
+  function initApp() {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    let currentUser = null;
+    let unsubSections = null;
+    let unsubTasks = null;
+    let sections = [];
+    let tasks = [];
+    let pendingWrites = 0;
+
+    // Date in header
+    $("todayDate").textContent = new Date().toLocaleDateString(undefined, {
+      weekday: "long", year: "numeric", month: "long", day: "numeric"
+    });
+
+    // ---------- Auth UI ----------
+    $("signInBtn").addEventListener("click", async () => {
+      $("authError").textContent = "";
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (e) {
+        $("authError").textContent = e.message || "Sign-in failed.";
+      }
+    });
+
+    $("signOutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      $("userMenu").classList.remove("open");
+    });
+
+    $("avatar").addEventListener("click", (e) => {
+      e.stopPropagation();
+      $("userMenu").classList.toggle("open");
+    });
+
+    document.addEventListener("click", () => $("userMenu").classList.remove("open"));
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        showApp(user);
+        attachListeners(user.uid);
+      } else {
+        if (unsubSections) unsubSections();
+        if (unsubTasks) unsubTasks();
+        showAuth();
+      }
+    });
+
+    function showAuth() {
+      $("authScreen").style.display = "flex";
+      $("app").style.display = "none";
+      $("loadingScreen").style.display = "none";
+    }
+
+    function showApp(user) {
+      $("authScreen").style.display = "none";
+      $("app").style.display = "block";
+      $("loadingScreen").style.display = "none";
+
+      const name = user.displayName || user.email;
+      $("menuName").textContent = name;
+      $("menuEmail").textContent = user.email;
+      $("footerEmail").textContent = user.email;
+
+      const avatar = $("avatar");
+      avatar.innerHTML = "";
+      if (user.photoURL) {
+        const img = document.createElement("img");
+        img.src = user.photoURL;
+        img.alt = name;
+        img.referrerPolicy = "no-referrer";
+        avatar.appendChild(img);
+      } else {
+        avatar.textContent = (name[0] || "?").toUpperCase();
+      }
+    }
+
+    // ---------- Sync indicator ----------
+    function setSync(state) {
+      const badge = $("syncBadge");
+      const text = $("syncText");
+      badge.classList.remove("syncing", "offline");
+      if (state === "syncing") { badge.classList.add("syncing"); text.textContent = "Saving…"; }
+      else if (state === "offline") { badge.classList.add("offline"); text.textContent = "Offline"; }
+      else { text.textContent = "Synced"; }
+    }
+
+    function trackWrite(promise) {
+      pendingWrites++;
+      setSync("syncing");
+      return promise.finally(() => {
+        pendingWrites--;
+        if (pendingWrites <= 0) setSync("synced");
+      });
+    }
+
+    window.addEventListener("offline", () => setSync("offline"));
+    window.addEventListener("online", () => setSync("synced"));
+
+    // ---------- Firestore listeners ----------
+    function attachListeners(uid) {
+      if (unsubSections) unsubSections();
+      if (unsubTasks) unsubTasks();
+
+      const sectionsRef = collection(db, "users", uid, "sections");
+      const tasksRef = collection(db, "users", uid, "tasks");
+
+      unsubSections = onSnapshot(sectionsRef, (snap) => {
+        sections = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+        render();
+      });
+
+      unsubTasks = onSnapshot(tasksRef, (snap) => {
+        tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        render();
+      });
+    }
+
+    // ---------- Mutations ----------
+    function uid() { return currentUser.uid; }
+
+    async function addSection(name) {
+      const trimmed = (name || "").trim();
+      if (!trimmed) return;
+      await trackWrite(addDoc(collection(db, "users", uid(), "sections"), {
+        name: trimmed,
+        createdAt: serverTimestamp()
+      }));
+    }
+
+    async function renameSection(id, name) {
+      const trimmed = (name || "").trim();
+      if (!trimmed) return;
+      await trackWrite(updateDoc(doc(db, "users", uid(), "sections", id), { name: trimmed }));
+    }
+
+    async function deleteSection(id) {
+      const s = sections.find(s => s.id === id);
+      if (!s) return;
+      const sTasks = tasks.filter(t => t.sectionId === id);
+      const msg = sTasks.length > 0
+        ? `Delete section "${s.name}" and its ${sTasks.length} task(s)? This cannot be undone.`
+        : `Delete section "${s.name}"?`;
+      if (!confirm(msg)) return;
+
+      const batch = writeBatch(db);
+      sTasks.forEach(t => batch.delete(doc(db, "users", uid(), "tasks", t.id)));
+      batch.delete(doc(db, "users", uid(), "sections", id));
+      await trackWrite(batch.commit());
+    }
+
+    async function addTask(sectionId, text) {
+      const trimmed = (text || "").trim();
+      if (!trimmed) return;
+      await trackWrite(addDoc(collection(db, "users", uid(), "tasks"), {
+        sectionId,
+        text: trimmed,
+        done: false,
+        createdAt: serverTimestamp(),
+        completedAt: null
+      }));
+    }
+
+    async function toggleTask(id) {
+      const t = tasks.find(t => t.id === id);
+      if (!t) return;
+      const newDone = !t.done;
+      await trackWrite(updateDoc(doc(db, "users", uid(), "tasks", id), {
+        done: newDone,
+        completedAt: newDone ? serverTimestamp() : null
+      }));
+    }
+
+    async function deleteTask(id) {
+      await trackWrite(deleteDoc(doc(db, "users", uid(), "tasks", id)));
+    }
+
+    async function clearAllDone() {
+      const doneTasks = tasks.filter(t => t.done);
+      if (doneTasks.length === 0) return;
+      if (!confirm(`Delete all ${doneTasks.length} completed task(s)? This cannot be undone.`)) return;
+      const batch = writeBatch(db);
+      doneTasks.forEach(t => batch.delete(doc(db, "users", uid(), "tasks", t.id)));
+      await trackWrite(batch.commit());
+    }
+
+    // ---------- Helpers ----------
+    function tsToDate(ts) {
+      if (!ts) return null;
+      if (ts.toDate) return ts.toDate();
+      return new Date(ts);
+    }
+
+    function formatTime(ts) {
+      const d = tsToDate(ts);
+      return d ? d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) : "";
+    }
+
+    function formatDateShort(ts) {
+      const d = tsToDate(ts);
+      return d ? d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+    }
+
+    // ---------- Rendering ----------
+    function makeTaskNode(t) {
+      const li = document.createElement("li");
+      li.className = "task-item" + (t.done ? " done" : "");
+
+      const cb = document.createElement("div");
+      cb.className = "checkbox" + (t.done ? " checked" : "");
+      cb.title = t.done ? "Mark as not done" : "Mark as done";
+      cb.addEventListener("click", () => toggleTask(t.id));
+
+      const text = document.createElement("div");
+      text.className = "task-text";
+      text.textContent = t.text;
+
+      const meta = document.createElement("div");
+      meta.className = "task-meta";
+      if (t.done && t.completedAt) {
+        meta.textContent = `${formatDateShort(t.completedAt)}, ${formatTime(t.completedAt)}`;
+      } else if (t.createdAt) {
+        meta.textContent = formatTime(t.createdAt);
+      }
+
+      const del = document.createElement("button");
+      del.className = "icon-btn";
+      del.title = "Delete task";
+      del.innerHTML = "&times;";
+      del.addEventListener("click", () => deleteTask(t.id));
+
+      li.appendChild(cb);
+      li.appendChild(text);
+      li.appendChild(meta);
+      li.appendChild(del);
+      return li;
+    }
+
+    function makeSectionCard(section, sectionTasks, mode) {
+      const card = document.createElement("div");
+      card.className = "section-card" + (mode === "done" ? " is-done" : "");
+
+      const head = document.createElement("div");
+      head.className = "section-head";
+
+      const marker = document.createElement("div");
+      marker.className = "section-marker";
+
+      const nameInput = document.createElement("input");
+      nameInput.className = "section-name";
+      nameInput.value = section.name;
+      nameInput.title = "Click to rename";
+      nameInput.addEventListener("change", () => {
+        const n = nameInput.value.trim();
+        if (!n) { nameInput.value = section.name; return; }
+        renameSection(section.id, n);
+      });
+      nameInput.addEventListener("keydown", e => { if (e.key === "Enter") nameInput.blur(); });
+
+      const meta = document.createElement("div");
+      meta.className = "section-meta";
+      meta.textContent = `${sectionTasks.length} ${sectionTasks.length === 1 ? "task" : "tasks"}`;
+
+      head.appendChild(marker);
+      head.appendChild(nameInput);
+      head.appendChild(meta);
+
+      if (mode === "active") {
+        const delBtn = document.createElement("button");
+        delBtn.className = "icon-btn";
+        delBtn.title = "Delete section";
+        delBtn.innerHTML = "&times;";
+        delBtn.addEventListener("click", () => deleteSection(section.id));
+        head.appendChild(delBtn);
+      }
+
+      card.appendChild(head);
+
+      const list = document.createElement("ul");
+      list.className = "task-list";
+
+      if (sectionTasks.length === 0) {
+        const empty = document.createElement("li");
+        empty.className = "empty-tasks";
+        empty.textContent = mode === "active" ? "No tasks yet." : "No completed tasks here.";
+        list.appendChild(empty);
+      } else {
+        const sorted = sectionTasks.slice().sort((a, b) => {
+          if (mode === "done") {
+            return (tsToDate(b.completedAt)?.getTime() || 0) - (tsToDate(a.completedAt)?.getTime() || 0);
+          }
+          return (tsToDate(a.createdAt)?.getTime() || 0) - (tsToDate(b.createdAt)?.getTime() || 0);
+        });
+        sorted.forEach(t => list.appendChild(makeTaskNode(t)));
+      }
+
+      card.appendChild(list);
+
+      if (mode === "active") {
+        const trigger = document.createElement("button");
+        trigger.className = "add-task-trigger";
+        trigger.innerHTML = '<span class="plus-sm">+</span><span>Add task</span>';
+
+        const form = document.createElement("div");
+        form.className = "add-task-form";
+        const inp = document.createElement("input");
+        inp.type = "text";
+        inp.className = "input-clean";
+        inp.placeholder = "Task description";
+        const addB = document.createElement("button");
+        addB.className = "btn btn-primary";
+        addB.textContent = "Add";
+        const cancelB = document.createElement("button");
+        cancelB.className = "btn btn-ghost";
+        cancelB.textContent = "Cancel";
+
+        const closeForm = () => {
+          card.classList.remove("adding");
+          form.classList.remove("open");
+          inp.value = "";
+        };
+        const submit = async () => {
+          const v = inp.value.trim();
+          if (!v) { closeForm(); return; }
+          inp.value = "";
+          await addTask(section.id, v);
+          // Keep form open so user can add multiple tasks
+          inp.focus();
+        };
+
+        trigger.addEventListener("click", () => {
+          card.classList.add("adding");
+          form.classList.add("open");
+          inp.focus();
+        });
+        addB.addEventListener("click", submit);
+        cancelB.addEventListener("click", closeForm);
+        inp.addEventListener("keydown", e => {
+          if (e.key === "Enter") submit();
+          if (e.key === "Escape") closeForm();
+        });
+
+        form.appendChild(inp);
+        form.appendChild(addB);
+        form.appendChild(cancelB);
+        card.appendChild(trigger);
+        card.appendChild(form);
+      }
+
+      return card;
+    }
+
+    function render() {
+      const activeRoot = $("activeSections");
+      const doneRoot = $("doneSections");
+      activeRoot.innerHTML = "";
+      doneRoot.innerHTML = "";
+
+      const activeTasks = tasks.filter(t => !t.done);
+      const doneTasks = tasks.filter(t => t.done);
+      $("activeCount").textContent = `${activeTasks.length} ${activeTasks.length === 1 ? "task" : "tasks"}`;
+      $("doneCount").textContent = `${doneTasks.length} ${doneTasks.length === 1 ? "task" : "tasks"}`;
+
+      if (sections.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No sections yet. Click + New section to get started.";
+        activeRoot.appendChild(empty);
+      } else {
+        sections.forEach(s => {
+          const sTasks = activeTasks.filter(t => t.sectionId === s.id);
+          activeRoot.appendChild(makeSectionCard(s, sTasks, "active"));
+        });
+      }
+
+      const sectionsWithDone = sections.filter(s =>
+        doneTasks.some(t => t.sectionId === s.id)
+      );
+
+      if (sectionsWithDone.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "Completed tasks will appear here.";
+        doneRoot.appendChild(empty);
+      } else {
+        sectionsWithDone
+          .map(s => {
+            const sTasks = doneTasks.filter(t => t.sectionId === s.id);
+            const latest = Math.max(...sTasks.map(t => tsToDate(t.completedAt)?.getTime() || 0));
+            return { s, sTasks, latest };
+          })
+          .sort((a, b) => b.latest - a.latest)
+          .forEach(({ s, sTasks }) => {
+            doneRoot.appendChild(makeSectionCard(s, sTasks, "done"));
+          });
+      }
+    }
+
+    // ---------- New section bar wiring ----------
+    const bar = $("newSectionBar");
+    const toggle = $("newSectionToggle");
+    const form = $("newSectionForm");
+    const input = $("newSectionInput");
+    const addBtn = $("addSectionBtn");
+    const cancelBtn = $("cancelSectionBtn");
+
+    const openSecForm = () => { bar.classList.add("open"); form.classList.add("open"); input.focus(); };
+    const closeSecForm = () => { bar.classList.remove("open"); form.classList.remove("open"); input.value = ""; };
+    const submitSec = async () => {
+      const v = input.value.trim();
+      if (!v) { closeSecForm(); return; }
+      input.value = "";
+      await addSection(v);
+      input.focus();
+    };
+
+    toggle.addEventListener("click", openSecForm);
+    addBtn.addEventListener("click", submitSec);
+    cancelBtn.addEventListener("click", closeSecForm);
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") submitSec();
+      if (e.key === "Escape") closeSecForm();
+    });
+
+    $("clearDoneBtn").addEventListener("click", clearAllDone);
+  }
+</script>
+</body>
+</html>
