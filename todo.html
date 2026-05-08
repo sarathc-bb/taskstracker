@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tasks</title>
+<title>Tasks Tracker</title>
 <style>
   :root {
     /* Surfaces */
@@ -44,6 +44,12 @@
     --c-violet: #c084fc;
     --c-rose: #fb7185;
     --c-teal: #2dd4bf;
+
+    /* Priority palette */
+    --p0: #f87171;     /* red - critical */
+    --p1: #fb923c;     /* orange - high */
+    --p2: #60a5fa;     /* blue - medium */
+    --p3: #a1a1aa;     /* gray - low */
 
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
     --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
@@ -90,7 +96,7 @@
   .auth-card .logo {
     width: 56px;
     height: 56px;
-    background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
+    background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f472b6 100%);
     border-radius: 14px;
     display: inline-flex;
     align-items: center;
@@ -98,13 +104,18 @@
     margin-bottom: 18px;
     color: #fff;
     font-size: 26px;
+    box-shadow: 0 0 20px rgba(129, 140, 248, 0.4);
   }
 
   .auth-card h1 {
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.01em;
     margin-bottom: 6px;
+    background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f472b6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .auth-card p {
@@ -130,7 +141,6 @@
   }
 
   .google-btn:hover { background: var(--surface-soft); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-
   .google-btn svg { width: 18px; height: 18px; }
 
   .auth-error {
@@ -142,7 +152,7 @@
 
   /* ---------- Main app ---------- */
   .container {
-    max-width: 760px;
+    max-width: 800px;
     margin: 0 auto;
     background: var(--surface);
     border: 1px solid var(--border);
@@ -153,14 +163,14 @@
 
   /* Header */
   header {
-    padding: 24px 32px;
+    padding: 26px 32px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     background:
-      linear-gradient(135deg, rgba(129,140,248,0.08) 0%, rgba(52,211,153,0.04) 100%),
+      linear-gradient(135deg, rgba(129,140,248,0.10) 0%, rgba(192,132,252,0.06) 50%, rgba(244,114,182,0.06) 100%),
       var(--surface);
     position: relative;
   }
@@ -170,20 +180,24 @@
     position: absolute;
     left: 0; right: 0; bottom: -1px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent-border), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent-border), rgba(244,114,182,0.4), transparent);
   }
 
-  .title-block h1 {
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--text);
+  .title-block h1.brand-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #818cf8 0%, #c084fc 35%, #f472b6 70%, #fb923c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.1;
   }
 
   .title-block .date {
     color: var(--text-secondary);
     font-size: 13px;
-    margin-top: 2px;
+    margin-top: 4px;
   }
 
   .user-block {
@@ -199,7 +213,7 @@
     gap: 6px;
     font-size: 11px;
     color: var(--text-secondary);
-    background: var(--surface);
+    background: var(--surface-elevated);
     padding: 4px 10px;
     border-radius: 999px;
     border: 1px solid var(--border);
@@ -209,11 +223,11 @@
     width: 6px; height: 6px;
     border-radius: 50%;
     background: var(--success);
-    box-shadow: 0 0 0 2px var(--success-soft);
+    box-shadow: 0 0 8px var(--success);
   }
 
-  .sync-badge.syncing .sync-dot { background: var(--warning); animation: pulse 1.2s ease-in-out infinite; }
-  .sync-badge.offline .sync-dot { background: var(--text-muted); }
+  .sync-badge.syncing .sync-dot { background: var(--warning); box-shadow: 0 0 8px var(--warning); animation: pulse 1.2s ease-in-out infinite; }
+  .sync-badge.offline .sync-dot { background: var(--text-muted); box-shadow: none; }
 
   @keyframes pulse {
     0%, 100% { opacity: 1; }
@@ -244,11 +258,11 @@
     position: absolute;
     right: 0;
     top: calc(100% + 8px);
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-strong);
     border-radius: 8px;
     box-shadow: var(--shadow-lg);
-    min-width: 200px;
+    min-width: 220px;
     padding: 6px;
     display: none;
     z-index: 10;
@@ -270,7 +284,7 @@
     font-family: inherit;
   }
 
-  .menu-item:hover { background: var(--accent-soft); }
+  .menu-item:hover { background: var(--accent-soft); color: var(--accent-hover); }
 
   .menu-info {
     padding: 8px 10px;
@@ -280,6 +294,53 @@
 
   .menu-info .name { font-size: 13px; font-weight: 500; color: var(--text); }
   .menu-info .email { font-size: 11px; color: var(--text-secondary); margin-top: 1px; word-break: break-all; }
+
+  /* Generic inputs and buttons */
+  .input-clean {
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    background: var(--surface-elevated);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .input-clean:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .btn {
+    padding: 9px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    font-family: inherit;
+    transition: all 0.15s;
+    line-height: 1.2;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0b0b10;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border-color: var(--border-strong);
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--text-muted); }
 
   /* New section bar */
   .new-section-bar {
@@ -298,7 +359,7 @@
     padding: 6px 0;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     transition: color 0.15s;
     font-family: inherit;
   }
@@ -320,59 +381,164 @@
 
   .new-section-form {
     display: none;
-    gap: 8px;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .new-section-form.open { display: flex; }
   .new-section-bar.open .new-section-toggle { display: none; }
 
-  .input-clean {
-    padding: 9px 12px;
-    border: 1px solid var(--border-strong);
+  .new-section-form .row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .new-section-form .input-clean { flex: 1; min-width: 200px; }
+
+  /* Type selector */
+  .type-selector {
+    display: inline-flex;
+    background: var(--surface-elevated);
     border-radius: 7px;
-    font-size: 14px;
+    padding: 2px;
+    border: 1px solid var(--border);
+  }
+
+  .type-option {
+    padding: 7px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    background: none;
+    border: none;
     font-family: inherit;
-    color: var(--text);
-    outline: none;
+    transition: all 0.15s;
+  }
+
+  .type-option.active {
+    background: var(--accent);
+    color: #0b0b10;
+    font-weight: 600;
+    box-shadow: 0 0 12px rgba(129, 140, 248, 0.4);
+  }
+
+  .form-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
+
+  /* Templates panel */
+  .templates-panel {
+    border-bottom: 1px solid var(--border);
     background: var(--surface);
-    transition: border-color 0.15s, box-shadow 0.15s;
   }
 
-  .input-clean:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(67,56,202,0.12);
-  }
-
-  .new-section-form .input-clean { flex: 1; }
-
-  .btn {
-    padding: 9px 16px;
-    border-radius: 7px;
+  .templates-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 32px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    border: 1px solid transparent;
     font-family: inherit;
-    transition: all 0.15s;
-    line-height: 1.2;
+    transition: color 0.15s;
   }
 
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
+  .templates-toggle:hover { color: var(--text); }
+
+  .templates-toggle .left {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .templates-toggle .chevron {
+    display: inline-block;
+    transition: transform 0.2s;
+    color: var(--text-muted);
+  }
 
-  .btn-ghost {
-    background: transparent;
+  .templates-panel.open .templates-toggle .chevron { transform: rotate(90deg); }
+
+  .templates-toggle .recur-icon {
+    width: 16px; height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-cyan);
+  }
+
+  .templates-count {
+    background: var(--surface-elevated);
     color: var(--text-secondary);
-    border-color: var(--border-strong);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    margin-left: 6px;
   }
 
-  .btn-ghost:hover { color: var(--text); border-color: var(--text-muted); }
+  .templates-content {
+    display: none;
+    padding: 4px 32px 16px;
+  }
+
+  .templates-panel.open .templates-content { display: block; }
+
+  .templates-help {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--c-cyan);
+    border-radius: 6px;
+  }
+
+  .template-list { list-style: none; margin-bottom: 12px; }
+
+  .template-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    margin-bottom: 6px;
+  }
+
+  .template-text { flex: 1; font-size: 14px; }
+
+  .template-empty {
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+    padding: 14px;
+    font-style: italic;
+  }
+
+  .template-add-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .template-add-form .input-clean { flex: 1; min-width: 200px; }
 
   /* Pane */
   .pane { padding: 24px 32px; }
@@ -400,9 +566,10 @@
     width: 8px; height: 8px;
     border-radius: 50%;
     background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
   }
 
-  #doneTitle .dot { background: var(--success); }
+  #doneTitle .dot { background: var(--success); box-shadow: 0 0 8px var(--success); }
 
   .pane-actions {
     display: flex;
@@ -426,16 +593,30 @@
   .link-btn:hover { color: var(--danger); }
 
   /* Section card */
-  .section-card { margin-bottom: 22px; }
+  .section-card {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
   .section-card:last-child { margin-bottom: 0; }
+  .section-card:hover { border-color: var(--border-strong); }
+
+  .section-card.is-done {
+    background: rgba(52, 211, 153, 0.04);
+    border-color: rgba(52, 211, 153, 0.18);
+  }
 
   .section-head {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 0 0 10px;
-    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
     margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
   }
 
   .section-marker {
@@ -446,7 +627,6 @@
     box-shadow: 0 0 8px rgba(129, 140, 248, 0.4);
   }
 
-  /* Per-section accent colors based on section ID hash */
   .section-card.color-0 .section-marker { background: var(--c-indigo);  box-shadow: 0 0 8px rgba(129,140,248,0.4); }
   .section-card.color-1 .section-marker { background: var(--c-emerald); box-shadow: 0 0 8px rgba(52,211,153,0.4); }
   .section-card.color-2 .section-marker { background: var(--c-amber);   box-shadow: 0 0 8px rgba(251,191,36,0.4); }
@@ -456,7 +636,6 @@
   .section-card.color-6 .section-marker { background: var(--c-rose);    box-shadow: 0 0 8px rgba(251,113,133,0.4); }
   .section-card.color-7 .section-marker { background: var(--c-teal);    box-shadow: 0 0 8px rgba(45,212,191,0.4); }
 
-  /* Done state always uses success green */
   .section-card.is-done .section-marker { background: var(--success); box-shadow: 0 0 8px rgba(52,211,153,0.4); }
 
   .section-name {
@@ -476,7 +655,26 @@
   }
 
   .section-name:hover { background: var(--accent-soft); }
-  .section-name:focus { background: var(--surface); border-color: var(--accent-border); box-shadow: 0 0 0 3px rgba(67,56,202,0.08); }
+  .section-name:focus { background: var(--surface); border-color: var(--accent-border); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  .section-type-badge {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--surface-elevated);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .section-type-badge.general {
+    background: rgba(34,211,238,0.1);
+    color: var(--c-cyan);
+    border-color: rgba(34,211,238,0.3);
+  }
 
   .section-meta {
     font-size: 12px;
@@ -499,7 +697,8 @@
   }
 
   .section-head:hover .icon-btn,
-  .task-item:hover .icon-btn { opacity: 1; }
+  .task-item:hover .icon-btn,
+  .template-item .icon-btn { opacity: 1; }
 
   .icon-btn:hover { color: var(--danger); background: var(--danger-soft); }
 
@@ -509,7 +708,7 @@
   .task-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     padding: 9px 10px;
     margin: 0 -10px;
     border-radius: 7px;
@@ -526,7 +725,25 @@
 
   .task-item.done .task-text { text-decoration: line-through; color: var(--text-muted); }
 
-  .checkbox {
+  .task-item.skipped {
+    background: rgba(161, 161, 170, 0.06);
+    border-left-color: var(--text-muted);
+  }
+
+  .task-item.skipped .task-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
+    opacity: 0.7;
+  }
+
+  /* Status buttons */
+  .status-buttons {
+    display: inline-flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .check-btn, .skip-btn {
     width: 18px;
     height: 18px;
     border: 1.5px solid var(--border-strong);
@@ -538,23 +755,50 @@
     justify-content: center;
     transition: all 0.15s;
     background: var(--surface);
+    padding: 0;
   }
 
-  .checkbox:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .check-btn:hover { border-color: var(--success); background: var(--success-soft); }
+  .skip-btn:hover { border-color: var(--danger); background: var(--danger-soft); }
 
-  .checkbox.checked {
+  .check-btn.active {
     background: var(--success);
     border-color: var(--success);
+    box-shadow: 0 0 8px rgba(52,211,153,0.5);
   }
 
-  .checkbox.checked::after {
+  .check-btn.active::after {
     content: "";
     width: 4px;
     height: 9px;
-    border: solid #fff;
+    border: solid #0b0b10;
     border-width: 0 2px 2px 0;
     transform: rotate(45deg) translate(-0.5px, -1.5px);
   }
+
+  .skip-btn.active {
+    background: var(--text-muted);
+    border-color: var(--text-muted);
+    color: var(--surface);
+  }
+
+  .skip-btn.active::before,
+  .skip-btn.active::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 1.8px;
+    background: var(--surface);
+    border-radius: 1px;
+  }
+
+  .skip-btn { position: relative; }
+  .skip-btn.active::before { transform: rotate(45deg); }
+  .skip-btn.active::after { transform: rotate(-45deg); }
+
+  /* When inactive, show subtle X for skip-btn always */
+  .skip-btn:not(.active) svg { width: 10px; height: 10px; color: var(--text-muted); }
+  .skip-btn:hover svg { color: var(--danger); }
 
   .task-text {
     flex: 1;
@@ -562,6 +806,49 @@
     color: var(--text);
     word-break: break-word;
   }
+
+  /* Priority pill */
+  .priority-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .priority-pill:hover { transform: scale(1.05); }
+
+  .priority-pill.p0 { background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.4); color: var(--p0); }
+  .priority-pill.p1 { background: rgba(251,146,60,0.15); border-color: rgba(251,146,60,0.4); color: var(--p1); }
+  .priority-pill.p2 { background: rgba(96,165,250,0.15); border-color: rgba(96,165,250,0.4); color: var(--p2); }
+  .priority-pill.p3 { background: rgba(161,161,170,0.15); border-color: rgba(161,161,170,0.4); color: var(--p3); }
+
+  .task-item.done .priority-pill,
+  .task-item.skipped .priority-pill { opacity: 0.6; }
+
+  /* Priority select (for forms) */
+  .priority-select {
+    padding: 8px 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    background: var(--surface-elevated);
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    flex-shrink: 0;
+  }
+
+  .priority-select:focus { border-color: var(--accent); }
 
   .task-meta {
     font-size: 11px;
@@ -571,6 +858,7 @@
   }
 
   .task-item.done .task-meta { color: var(--success); font-weight: 500; }
+  .task-item.skipped .task-meta { color: var(--text-muted); font-style: italic; }
 
   /* Inline add task */
   .add-task-trigger {
@@ -583,7 +871,7 @@
     font-size: 13px;
     cursor: pointer;
     padding: 8px 8px;
-    margin: 6px -8px 0;
+    margin: 8px -8px 0;
     border-radius: 6px;
     transition: all 0.12s;
     font-family: inherit;
@@ -597,12 +885,13 @@
     align-items: center;
     gap: 8px;
     padding: 8px 0 4px;
+    flex-wrap: wrap;
   }
 
   .add-task-form.open { display: flex; }
   .section-card.adding .add-task-trigger { display: none; }
 
-  .add-task-form .input-clean { flex: 1; }
+  .add-task-form .input-clean { flex: 1; min-width: 180px; }
 
   /* Empty states */
   .empty {
@@ -679,12 +968,14 @@
     body { padding: 0; }
     .container { border-radius: 0; border-left: none; border-right: none; border-top: none; min-height: 100vh; }
     header { padding: 18px 20px; flex-wrap: wrap; }
-    .new-section-bar, .pane, footer { padding-left: 20px; padding-right: 20px; }
-    .title-block h1 { font-size: 18px; }
+    .new-section-bar, .pane, footer, .templates-toggle { padding-left: 20px; padding-right: 20px; }
+    .templates-content { padding-left: 20px; padding-right: 20px; }
+    .title-block h1.brand-title { font-size: 22px; }
     .pane { padding-top: 18px; padding-bottom: 18px; }
-    .add-task-form { flex-wrap: wrap; }
-    .add-task-form .input-clean { min-width: 0; }
+    .add-task-form .input-clean { min-width: 0; flex-basis: 100%; }
+    .new-section-form .input-clean { min-width: 0; flex-basis: 100%; }
     .auth-card { margin: 20px; padding: 32px 24px; }
+    .section-card { padding: 14px; }
   }
 </style>
 </head>
@@ -694,7 +985,7 @@
 <div id="authScreen" class="auth-wrap" style="display:none;">
   <div class="auth-card">
     <div class="logo">✓</div>
-    <h1>Tasks</h1>
+    <h1>Tasks Tracker</h1>
     <p>Sign in to access your tasks on any device</p>
     <button class="google-btn" id="signInBtn">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -714,7 +1005,7 @@
   <span class="spinner"></span> Loading…
 </div>
 
-<!-- Config warning shown if Firebase not configured -->
+<!-- Config warning -->
 <div id="configWarning" class="config-warning" style="display:none;">
   <strong>Setup needed.</strong> This file isn't configured to connect to Firebase yet. Open <code>todo.html</code> in a text editor and replace the <code>firebaseConfig</code> object near the bottom of the file with the one from your Firebase project.
 </div>
@@ -723,7 +1014,7 @@
 <div id="app" class="container" style="display:none;">
   <header>
     <div class="title-block">
-      <h1>Tasks</h1>
+      <h1 class="brand-title">Tasks Tracker</h1>
       <div class="date" id="todayDate"></div>
     </div>
     <div class="user-block">
@@ -741,15 +1032,57 @@
     </div>
   </header>
 
+  <!-- New section bar -->
   <div class="new-section-bar" id="newSectionBar">
     <button class="new-section-toggle" id="newSectionToggle">
       <span class="plus">+</span>
       <span>New section</span>
     </button>
     <div class="new-section-form" id="newSectionForm">
-      <input type="text" class="input-clean" id="newSectionInput" placeholder="Section name (e.g. May 8, Work, Errands)" autocomplete="off" />
-      <button class="btn btn-primary" id="addSectionBtn">Add</button>
-      <button class="btn btn-ghost" id="cancelSectionBtn">Cancel</button>
+      <div class="row">
+        <span class="form-label">Type</span>
+        <div class="type-selector" id="typeSelector">
+          <button type="button" class="type-option active" data-type="general">General</button>
+          <button type="button" class="type-option" data-type="others">Others</button>
+        </div>
+      </div>
+      <div class="row">
+        <input type="text" class="input-clean" id="newSectionInput" placeholder="Section name (e.g. May 8, Work, Errands)" autocomplete="off" />
+        <button class="btn btn-primary" id="addSectionBtn">Add section</button>
+        <button class="btn btn-ghost" id="cancelSectionBtn">Cancel</button>
+      </div>
+      <div style="font-size:11px; color: var(--text-muted); padding: 0 2px;">
+        <strong style="color: var(--c-cyan);">General</strong> sections auto-include your recurring tasks. <strong>Others</strong> start empty.
+      </div>
+    </div>
+  </div>
+
+  <!-- Recurring task templates panel -->
+  <div class="templates-panel" id="templatesPanel">
+    <button class="templates-toggle" id="templatesToggle">
+      <span class="left">
+        <span class="chevron">▶</span>
+        <span class="recur-icon">↻</span>
+        <span>Recurring tasks</span>
+        <span class="templates-count" id="templatesCount">0</span>
+      </span>
+      <span style="font-size:11px; color: var(--text-muted);">Auto-added to General sections</span>
+    </button>
+    <div class="templates-content">
+      <div class="templates-help">
+        Tasks listed here are automatically added whenever you create a new <strong>General</strong> section. Use this for daily/weekly/monthly chores.
+      </div>
+      <ul class="template-list" id="templateList"></ul>
+      <div class="template-add-form">
+        <input type="text" class="input-clean" id="newTemplateInput" placeholder="Recurring task description (e.g. Send weekly report)" autocomplete="off" />
+        <select class="priority-select" id="newTemplatePriority">
+          <option value="P0">P0 · Critical</option>
+          <option value="P1">P1 · High</option>
+          <option value="P2" selected>P2 · Medium</option>
+          <option value="P3">P3 · Low</option>
+        </select>
+        <button class="btn btn-primary" id="addTemplateBtn">Add</button>
+      </div>
     </div>
   </div>
 
@@ -766,7 +1099,7 @@
       <span class="pane-title" id="doneTitle"><span class="dot"></span>History</span>
       <div class="pane-actions">
         <span id="doneCount">0 tasks</span>
-        <button class="link-btn" id="clearDoneBtn" title="Delete all completed tasks">Clear all</button>
+        <button class="link-btn" id="clearDoneBtn" title="Delete all closed tasks">Clear all</button>
       </div>
     </div>
     <div id="doneSections"></div>
@@ -782,12 +1115,9 @@
   } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
   import {
     getFirestore, collection, doc, addDoc, updateDoc, deleteDoc,
-    onSnapshot, query, writeBatch, serverTimestamp
+    onSnapshot, writeBatch, serverTimestamp, getDocs
   } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
-  // ============================================================
-  // PASTE YOUR FIREBASE CONFIG HERE
-  // ============================================================
   const firebaseConfig = {
     apiKey: "AIzaSyB_U5FMuxdie7ynebUWu1JhuJg-ftj9Yro",
     authDomain: "tasks-tracker-50661.firebaseapp.com",
@@ -796,18 +1126,11 @@
     messagingSenderId: "263049073107",
     appId: "1:263049073107:web:dc017a47347a41a7e69f26"
   };
-  // ============================================================
 
   const $ = (id) => document.getElementById(id);
+  const PRIORITIES = ["P0", "P1", "P2", "P3"];
 
-  // Detect unconfigured state
-  const configured = firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY";
-  if (!configured) {
-    $("loadingScreen").style.display = "none";
-    $("configWarning").style.display = "block";
-  } else {
-    initApp();
-  }
+  initApp();
 
   function initApp() {
     const app = initializeApp(firebaseConfig);
@@ -818,23 +1141,22 @@
     let currentUser = null;
     let unsubSections = null;
     let unsubTasks = null;
+    let unsubTemplates = null;
     let sections = [];
     let tasks = [];
+    let templates = [];
     let pendingWrites = 0;
+    let selectedSectionType = "general";
 
-    // Date in header
     $("todayDate").textContent = new Date().toLocaleDateString(undefined, {
       weekday: "long", year: "numeric", month: "long", day: "numeric"
     });
 
-    // ---------- Auth UI ----------
+    // --- Auth ---
     $("signInBtn").addEventListener("click", async () => {
       $("authError").textContent = "";
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (e) {
-        $("authError").textContent = e.message || "Sign-in failed.";
-      }
+      try { await signInWithPopup(auth, provider); }
+      catch (e) { $("authError").textContent = e.message || "Sign-in failed."; }
     });
 
     $("signOutBtn").addEventListener("click", async () => {
@@ -842,21 +1164,19 @@
       $("userMenu").classList.remove("open");
     });
 
-    $("avatar").addEventListener("click", (e) => {
+    $("avatar").addEventListener("click", e => {
       e.stopPropagation();
       $("userMenu").classList.toggle("open");
     });
-
     document.addEventListener("click", () => $("userMenu").classList.remove("open"));
 
     onAuthStateChanged(auth, (user) => {
       currentUser = user;
-      if (user) {
-        showApp(user);
-        attachListeners(user.uid);
-      } else {
+      if (user) { showApp(user); attachListeners(user.uid); }
+      else {
         if (unsubSections) unsubSections();
         if (unsubTasks) unsubTasks();
+        if (unsubTemplates) unsubTemplates();
         showAuth();
       }
     });
@@ -866,125 +1186,166 @@
       $("app").style.display = "none";
       $("loadingScreen").style.display = "none";
     }
-
     function showApp(user) {
       $("authScreen").style.display = "none";
       $("app").style.display = "block";
       $("loadingScreen").style.display = "none";
-
       const name = user.displayName || user.email;
       $("menuName").textContent = name;
       $("menuEmail").textContent = user.email;
       $("footerEmail").textContent = user.email;
-
       const avatar = $("avatar");
       avatar.innerHTML = "";
       if (user.photoURL) {
         const img = document.createElement("img");
-        img.src = user.photoURL;
-        img.alt = name;
-        img.referrerPolicy = "no-referrer";
+        img.src = user.photoURL; img.alt = name; img.referrerPolicy = "no-referrer";
         avatar.appendChild(img);
-      } else {
-        avatar.textContent = (name[0] || "?").toUpperCase();
-      }
+      } else avatar.textContent = (name[0] || "?").toUpperCase();
     }
 
-    // ---------- Sync indicator ----------
+    // --- Sync indicator ---
     function setSync(state) {
-      const badge = $("syncBadge");
-      const text = $("syncText");
+      const badge = $("syncBadge"); const text = $("syncText");
       badge.classList.remove("syncing", "offline");
       if (state === "syncing") { badge.classList.add("syncing"); text.textContent = "Saving…"; }
       else if (state === "offline") { badge.classList.add("offline"); text.textContent = "Offline"; }
-      else { text.textContent = "Synced"; }
+      else text.textContent = "Synced";
     }
-
-    function trackWrite(promise) {
-      pendingWrites++;
-      setSync("syncing");
-      return promise.finally(() => {
-        pendingWrites--;
-        if (pendingWrites <= 0) setSync("synced");
-      });
+    function trackWrite(p) {
+      pendingWrites++; setSync("syncing");
+      return p.finally(() => { pendingWrites--; if (pendingWrites <= 0) setSync("synced"); });
     }
-
     window.addEventListener("offline", () => setSync("offline"));
     window.addEventListener("online", () => setSync("synced"));
 
-    // ---------- Firestore listeners ----------
+    // --- Firestore listeners ---
     function attachListeners(uid) {
       if (unsubSections) unsubSections();
       if (unsubTasks) unsubTasks();
+      if (unsubTemplates) unsubTemplates();
 
-      const sectionsRef = collection(db, "users", uid, "sections");
-      const tasksRef = collection(db, "users", uid, "tasks");
-
-      unsubSections = onSnapshot(sectionsRef, (snap) => {
+      unsubSections = onSnapshot(collection(db, "users", uid, "sections"), snap => {
         sections = snap.docs.map(d => ({ id: d.id, ...d.data() }))
           .sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
         render();
       });
-
-      unsubTasks = onSnapshot(tasksRef, (snap) => {
+      unsubTasks = onSnapshot(collection(db, "users", uid, "tasks"), snap => {
         tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         render();
       });
+      unsubTemplates = onSnapshot(collection(db, "users", uid, "templates"), snap => {
+        templates = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => (a.createdAt?.toMillis?.() || 0) - (b.createdAt?.toMillis?.() || 0));
+        renderTemplates();
+      });
     }
 
-    // ---------- Mutations ----------
-    function uid() { return currentUser.uid; }
+    const uid = () => currentUser.uid;
 
-    async function addSection(name) {
+    // --- Helpers ---
+    function tsToDate(ts) {
+      if (!ts) return null;
+      if (ts.toDate) return ts.toDate();
+      return new Date(ts);
+    }
+    function formatTime(ts) {
+      const d = tsToDate(ts);
+      return d ? d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) : "";
+    }
+    function formatDateShort(ts) {
+      const d = tsToDate(ts);
+      return d ? d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+    }
+    function getStatus(t) {
+      if (t.status) return t.status;
+      if (t.done) return "done";
+      return "open";
+    }
+    function getClosedAt(t) {
+      return t.closedAt || t.completedAt || null;
+    }
+    function isClosed(t) {
+      const s = getStatus(t);
+      return s === "done" || s === "skipped";
+    }
+    function sectionColorClass(id) {
+      let h = 0;
+      for (let i = 0; i < id.length; i++) h = (h + id.charCodeAt(i) * (i + 1)) >>> 0;
+      return "color-" + (h % 8);
+    }
+    function nextPriority(p) {
+      const i = PRIORITIES.indexOf(p || "P2");
+      return PRIORITIES[(i + 1) % PRIORITIES.length];
+    }
+
+    // --- Mutations: Sections ---
+    async function addSection(name, type) {
       const trimmed = (name || "").trim();
       if (!trimmed) return;
-      await trackWrite(addDoc(collection(db, "users", uid(), "sections"), {
-        name: trimmed,
-        createdAt: serverTimestamp()
+      const sectionRef = await trackWrite(addDoc(collection(db, "users", uid(), "sections"), {
+        name: trimmed, type: type || "others", createdAt: serverTimestamp()
       }));
+      // If General, copy templates to tasks in this section
+      if (type === "general" && templates.length > 0) {
+        const batch = writeBatch(db);
+        templates.forEach(t => {
+          const tref = doc(collection(db, "users", uid(), "tasks"));
+          batch.set(tref, {
+            sectionId: sectionRef.id,
+            text: t.text,
+            priority: t.priority || "P2",
+            status: "open",
+            createdAt: serverTimestamp(),
+            closedAt: null,
+            fromTemplate: t.id
+          });
+        });
+        await trackWrite(batch.commit());
+      }
     }
 
     async function renameSection(id, name) {
-      const trimmed = (name || "").trim();
-      if (!trimmed) return;
-      await trackWrite(updateDoc(doc(db, "users", uid(), "sections", id), { name: trimmed }));
+      const t = (name || "").trim(); if (!t) return;
+      await trackWrite(updateDoc(doc(db, "users", uid(), "sections", id), { name: t }));
     }
 
     async function deleteSection(id) {
-      const s = sections.find(s => s.id === id);
-      if (!s) return;
+      const s = sections.find(s => s.id === id); if (!s) return;
       const sTasks = tasks.filter(t => t.sectionId === id);
       const msg = sTasks.length > 0
         ? `Delete section "${s.name}" and its ${sTasks.length} task(s)? This cannot be undone.`
         : `Delete section "${s.name}"?`;
       if (!confirm(msg)) return;
-
       const batch = writeBatch(db);
       sTasks.forEach(t => batch.delete(doc(db, "users", uid(), "tasks", t.id)));
       batch.delete(doc(db, "users", uid(), "sections", id));
       await trackWrite(batch.commit());
     }
 
-    async function addTask(sectionId, text) {
-      const trimmed = (text || "").trim();
-      if (!trimmed) return;
+    // --- Mutations: Tasks ---
+    async function addTask(sectionId, text, priority) {
+      const t = (text || "").trim(); if (!t) return;
       await trackWrite(addDoc(collection(db, "users", uid(), "tasks"), {
-        sectionId,
-        text: trimmed,
-        done: false,
-        createdAt: serverTimestamp(),
-        completedAt: null
+        sectionId, text: t, priority: priority || "P2",
+        status: "open", createdAt: serverTimestamp(), closedAt: null
       }));
     }
 
-    async function toggleTask(id) {
-      const t = tasks.find(t => t.id === id);
-      if (!t) return;
-      const newDone = !t.done;
+    async function setTaskStatus(id, newStatus) {
+      const t = tasks.find(t => t.id === id); if (!t) return;
+      const cur = getStatus(t);
+      const finalStatus = (cur === newStatus) ? "open" : newStatus;
       await trackWrite(updateDoc(doc(db, "users", uid(), "tasks", id), {
-        done: newDone,
-        completedAt: newDone ? serverTimestamp() : null
+        status: finalStatus,
+        closedAt: finalStatus === "open" ? null : serverTimestamp(),
+        // Clean up old field for migrated docs
+        done: finalStatus === "done",
+        completedAt: finalStatus === "done" ? serverTimestamp() : null
       }));
+    }
+
+    async function setTaskPriority(id, p) {
+      await trackWrite(updateDoc(doc(db, "users", uid(), "tasks", id), { priority: p }));
     }
 
     async function deleteTask(id) {
@@ -992,70 +1353,100 @@
     }
 
     async function clearAllDone() {
-      const doneTasks = tasks.filter(t => t.done);
-      if (doneTasks.length === 0) return;
-      if (!confirm(`Delete all ${doneTasks.length} completed task(s)? This cannot be undone.`)) return;
+      const closed = tasks.filter(t => isClosed(t));
+      if (closed.length === 0) return;
+      if (!confirm(`Delete all ${closed.length} closed task(s)? This cannot be undone.`)) return;
       const batch = writeBatch(db);
-      doneTasks.forEach(t => batch.delete(doc(db, "users", uid(), "tasks", t.id)));
+      closed.forEach(t => batch.delete(doc(db, "users", uid(), "tasks", t.id)));
       await trackWrite(batch.commit());
     }
 
-    // ---------- Helpers ----------
-    function tsToDate(ts) {
-      if (!ts) return null;
-      if (ts.toDate) return ts.toDate();
-      return new Date(ts);
+    // --- Mutations: Templates ---
+    async function addTemplate(text, priority) {
+      const t = (text || "").trim(); if (!t) return;
+      await trackWrite(addDoc(collection(db, "users", uid(), "templates"), {
+        text: t, priority: priority || "P2", createdAt: serverTimestamp()
+      }));
+    }
+    async function deleteTemplate(id) {
+      await trackWrite(deleteDoc(doc(db, "users", uid(), "templates", id)));
+    }
+    async function setTemplatePriority(id, p) {
+      await trackWrite(updateDoc(doc(db, "users", uid(), "templates", id), { priority: p }));
     }
 
-    function formatTime(ts) {
-      const d = tsToDate(ts);
-      return d ? d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }) : "";
+    // --- Render ---
+    function makePriorityPill(priority, onClick) {
+      const p = (priority || "P2").toLowerCase();
+      const pill = document.createElement("button");
+      pill.type = "button";
+      pill.className = "priority-pill " + p;
+      pill.textContent = priority || "P2";
+      pill.title = "Click to change priority";
+      if (onClick) pill.addEventListener("click", e => { e.stopPropagation(); onClick(); });
+      return pill;
     }
 
-    function formatDateShort(ts) {
-      const d = tsToDate(ts);
-      return d ? d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) : "";
+    function makeStatusButtons(t) {
+      const wrap = document.createElement("div");
+      wrap.className = "status-buttons";
+      const status = getStatus(t);
+
+      const check = document.createElement("button");
+      check.type = "button";
+      check.className = "check-btn" + (status === "done" ? " active" : "");
+      check.title = status === "done" ? "Mark as not done" : "Mark as done";
+      check.addEventListener("click", () => setTaskStatus(t.id, "done"));
+
+      const skip = document.createElement("button");
+      skip.type = "button";
+      skip.className = "skip-btn" + (status === "skipped" ? " active" : "");
+      skip.title = status === "skipped" ? "Reopen task" : "Mark as skipped / not required";
+      if (status !== "skipped") {
+        skip.innerHTML = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 2 L10 10 M10 2 L2 10"/></svg>';
+      }
+      skip.addEventListener("click", () => setTaskStatus(t.id, "skipped"));
+
+      wrap.appendChild(check);
+      wrap.appendChild(skip);
+      return wrap;
     }
 
-    // ---------- Rendering ----------
     function makeTaskNode(t) {
+      const status = getStatus(t);
       const li = document.createElement("li");
-      li.className = "task-item" + (t.done ? " done" : "");
+      li.className = "task-item " + status;
 
-      const cb = document.createElement("div");
-      cb.className = "checkbox" + (t.done ? " checked" : "");
-      cb.title = t.done ? "Mark as not done" : "Mark as done";
-      cb.addEventListener("click", () => toggleTask(t.id));
+      li.appendChild(makeStatusButtons(t));
 
       const text = document.createElement("div");
       text.className = "task-text";
       text.textContent = t.text;
+      li.appendChild(text);
+
+      const pill = makePriorityPill(t.priority, async () => {
+        await setTaskPriority(t.id, nextPriority(t.priority));
+      });
+      li.appendChild(pill);
 
       const meta = document.createElement("div");
       meta.className = "task-meta";
-      if (t.done && t.completedAt) {
-        meta.textContent = `${formatDateShort(t.completedAt)}, ${formatTime(t.completedAt)}`;
+      const closedAt = getClosedAt(t);
+      if (status !== "open" && closedAt) {
+        meta.textContent = `${formatDateShort(closedAt)}, ${formatTime(closedAt)}`;
       } else if (t.createdAt) {
         meta.textContent = formatTime(t.createdAt);
       }
+      li.appendChild(meta);
 
       const del = document.createElement("button");
       del.className = "icon-btn";
       del.title = "Delete task";
       del.innerHTML = "&times;";
       del.addEventListener("click", () => deleteTask(t.id));
-
-      li.appendChild(cb);
-      li.appendChild(text);
-      li.appendChild(meta);
       li.appendChild(del);
-      return li;
-    }
 
-    function sectionColorClass(id) {
-      let hash = 0;
-      for (let i = 0; i < id.length; i++) hash = (hash + id.charCodeAt(i) * (i + 1)) >>> 0;
-      return "color-" + (hash % 8);
+      return li;
     }
 
     function makeSectionCard(section, sectionTasks, mode) {
@@ -1080,12 +1471,20 @@
       });
       nameInput.addEventListener("keydown", e => { if (e.key === "Enter") nameInput.blur(); });
 
+      const typeBadge = document.createElement("span");
+      typeBadge.className = "section-type-badge" + (section.type === "general" ? " general" : "");
+      typeBadge.textContent = section.type === "general" ? "General" : "Others";
+
       const meta = document.createElement("div");
       meta.className = "section-meta";
-      meta.textContent = `${sectionTasks.length} ${sectionTasks.length === 1 ? "task" : "tasks"}`;
+      const openCount = sectionTasks.filter(t => getStatus(t) === "open").length;
+      meta.textContent = mode === "active"
+        ? `${openCount} open`
+        : `${sectionTasks.length} ${sectionTasks.length === 1 ? "item" : "items"}`;
 
       head.appendChild(marker);
       head.appendChild(nameInput);
+      head.appendChild(typeBadge);
       head.appendChild(meta);
 
       if (mode === "active") {
@@ -1105,13 +1504,17 @@
       if (sectionTasks.length === 0) {
         const empty = document.createElement("li");
         empty.className = "empty-tasks";
-        empty.textContent = mode === "active" ? "No tasks yet." : "No completed tasks here.";
+        empty.textContent = mode === "active" ? "No tasks yet." : "No closed tasks here.";
         list.appendChild(empty);
       } else {
         const sorted = sectionTasks.slice().sort((a, b) => {
           if (mode === "done") {
-            return (tsToDate(b.completedAt)?.getTime() || 0) - (tsToDate(a.completedAt)?.getTime() || 0);
+            return (tsToDate(getClosedAt(b))?.getTime() || 0) - (tsToDate(getClosedAt(a))?.getTime() || 0);
           }
+          // Active: sort by priority asc (P0 first), then created asc
+          const pa = PRIORITIES.indexOf(a.priority || "P2");
+          const pb = PRIORITIES.indexOf(b.priority || "P2");
+          if (pa !== pb) return pa - pb;
           return (tsToDate(a.createdAt)?.getTime() || 0) - (tsToDate(b.createdAt)?.getTime() || 0);
         });
         sorted.forEach(t => list.appendChild(makeTaskNode(t)));
@@ -1127,15 +1530,20 @@
         const form = document.createElement("div");
         form.className = "add-task-form";
         const inp = document.createElement("input");
-        inp.type = "text";
-        inp.className = "input-clean";
-        inp.placeholder = "Task description";
+        inp.type = "text"; inp.className = "input-clean"; inp.placeholder = "Task description";
+        const sel = document.createElement("select");
+        sel.className = "priority-select";
+        PRIORITIES.forEach(p => {
+          const op = document.createElement("option");
+          op.value = p;
+          op.textContent = p === "P0" ? "P0 · Critical" : p === "P1" ? "P1 · High" : p === "P2" ? "P2 · Medium" : "P3 · Low";
+          if (p === "P2") op.selected = true;
+          sel.appendChild(op);
+        });
         const addB = document.createElement("button");
-        addB.className = "btn btn-primary";
-        addB.textContent = "Add";
+        addB.className = "btn btn-primary"; addB.textContent = "Add";
         const cancelB = document.createElement("button");
-        cancelB.className = "btn btn-ghost";
-        cancelB.textContent = "Cancel";
+        cancelB.className = "btn btn-ghost"; cancelB.textContent = "Cancel";
 
         const closeForm = () => {
           card.classList.remove("adding");
@@ -1146,8 +1554,7 @@
           const v = inp.value.trim();
           if (!v) { closeForm(); return; }
           inp.value = "";
-          await addTask(section.id, v);
-          // Keep form open so user can add multiple tasks
+          await addTask(section.id, v, sel.value);
           inp.focus();
         };
 
@@ -1164,6 +1571,7 @@
         });
 
         form.appendChild(inp);
+        form.appendChild(sel);
         form.appendChild(addB);
         form.appendChild(cancelB);
         card.appendChild(trigger);
@@ -1179,10 +1587,10 @@
       activeRoot.innerHTML = "";
       doneRoot.innerHTML = "";
 
-      const activeTasks = tasks.filter(t => !t.done);
-      const doneTasks = tasks.filter(t => t.done);
+      const activeTasks = tasks.filter(t => !isClosed(t));
+      const closedTasks = tasks.filter(t => isClosed(t));
       $("activeCount").textContent = `${activeTasks.length} ${activeTasks.length === 1 ? "task" : "tasks"}`;
-      $("doneCount").textContent = `${doneTasks.length} ${doneTasks.length === 1 ? "task" : "tasks"}`;
+      $("doneCount").textContent = `${closedTasks.length} ${closedTasks.length === 1 ? "task" : "tasks"}`;
 
       if (sections.length === 0) {
         const empty = document.createElement("div");
@@ -1196,53 +1604,117 @@
         });
       }
 
-      const sectionsWithDone = sections.filter(s =>
-        doneTasks.some(t => t.sectionId === s.id)
-      );
-
+      const sectionsWithDone = sections.filter(s => closedTasks.some(t => t.sectionId === s.id));
       if (sectionsWithDone.length === 0) {
         const empty = document.createElement("div");
         empty.className = "empty";
-        empty.textContent = "Completed tasks will appear here.";
+        empty.textContent = "Closed tasks (done or skipped) will appear here.";
         doneRoot.appendChild(empty);
       } else {
         sectionsWithDone
           .map(s => {
-            const sTasks = doneTasks.filter(t => t.sectionId === s.id);
-            const latest = Math.max(...sTasks.map(t => tsToDate(t.completedAt)?.getTime() || 0));
+            const sTasks = closedTasks.filter(t => t.sectionId === s.id);
+            const latest = Math.max(...sTasks.map(t => tsToDate(getClosedAt(t))?.getTime() || 0));
             return { s, sTasks, latest };
           })
           .sort((a, b) => b.latest - a.latest)
-          .forEach(({ s, sTasks }) => {
-            doneRoot.appendChild(makeSectionCard(s, sTasks, "done"));
-          });
+          .forEach(({ s, sTasks }) => doneRoot.appendChild(makeSectionCard(s, sTasks, "done")));
       }
     }
 
-    // ---------- New section bar wiring ----------
+    function renderTemplates() {
+      const list = $("templateList");
+      list.innerHTML = "";
+      $("templatesCount").textContent = templates.length;
+
+      if (templates.length === 0) {
+        const empty = document.createElement("li");
+        empty.className = "template-empty";
+        empty.textContent = "No recurring tasks yet. Add one below.";
+        list.appendChild(empty);
+        return;
+      }
+
+      templates.forEach(t => {
+        const li = document.createElement("li");
+        li.className = "template-item";
+
+        const text = document.createElement("div");
+        text.className = "template-text";
+        text.textContent = t.text;
+
+        const pill = makePriorityPill(t.priority, () => {
+          setTemplatePriority(t.id, nextPriority(t.priority));
+        });
+
+        const del = document.createElement("button");
+        del.className = "icon-btn";
+        del.title = "Delete recurring task";
+        del.innerHTML = "&times;";
+        del.addEventListener("click", () => deleteTemplate(t.id));
+
+        li.appendChild(text);
+        li.appendChild(pill);
+        li.appendChild(del);
+        list.appendChild(li);
+      });
+    }
+
+    // --- Wire up: New section ---
     const bar = $("newSectionBar");
-    const toggle = $("newSectionToggle");
-    const form = $("newSectionForm");
-    const input = $("newSectionInput");
-    const addBtn = $("addSectionBtn");
-    const cancelBtn = $("cancelSectionBtn");
+    const sToggle = $("newSectionToggle");
+    const sForm = $("newSectionForm");
+    const sInput = $("newSectionInput");
+    const sAdd = $("addSectionBtn");
+    const sCancel = $("cancelSectionBtn");
+    const typeSelector = $("typeSelector");
 
-    const openSecForm = () => { bar.classList.add("open"); form.classList.add("open"); input.focus(); };
-    const closeSecForm = () => { bar.classList.remove("open"); form.classList.remove("open"); input.value = ""; };
+    typeSelector.querySelectorAll(".type-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        typeSelector.querySelectorAll(".type-option").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedSectionType = btn.dataset.type;
+      });
+    });
+
+    const openSec = () => { bar.classList.add("open"); sForm.classList.add("open"); sInput.focus(); };
+    const closeSec = () => { bar.classList.remove("open"); sForm.classList.remove("open"); sInput.value = ""; };
     const submitSec = async () => {
-      const v = input.value.trim();
-      if (!v) { closeSecForm(); return; }
-      input.value = "";
-      await addSection(v);
-      input.focus();
+      const v = sInput.value.trim();
+      if (!v) { closeSec(); return; }
+      sInput.value = "";
+      await addSection(v, selectedSectionType);
+      sInput.focus();
     };
-
-    toggle.addEventListener("click", openSecForm);
-    addBtn.addEventListener("click", submitSec);
-    cancelBtn.addEventListener("click", closeSecForm);
-    input.addEventListener("keydown", e => {
+    sToggle.addEventListener("click", openSec);
+    sAdd.addEventListener("click", submitSec);
+    sCancel.addEventListener("click", closeSec);
+    sInput.addEventListener("keydown", e => {
       if (e.key === "Enter") submitSec();
-      if (e.key === "Escape") closeSecForm();
+      if (e.key === "Escape") closeSec();
+    });
+
+    // --- Wire up: Templates panel ---
+    const tPanel = $("templatesPanel");
+    $("templatesToggle").addEventListener("click", () => tPanel.classList.toggle("open"));
+
+    const tInput = $("newTemplateInput");
+    const tPriority = $("newTemplatePriority");
+    $("addTemplateBtn").addEventListener("click", async () => {
+      const v = tInput.value.trim();
+      if (!v) return;
+      tInput.value = "";
+      await addTemplate(v, tPriority.value);
+      tInput.focus();
+    });
+    tInput.addEventListener("keydown", async e => {
+      if (e.key === "Enter") {
+        const v = tInput.value.trim();
+        if (!v) return;
+        tInput.value = "";
+        await addTemplate(v, tPriority.value);
+        tInput.focus();
+      }
     });
 
     $("clearDoneBtn").addEventListener("click", clearAllDone);
