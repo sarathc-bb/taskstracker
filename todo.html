@@ -7,36 +7,47 @@
 <style>
   :root {
     /* Surfaces */
-    --bg: #f1f5f9;
-    --surface: #ffffff;
-    --surface-soft: #f8fafc;
+    --bg: #09090b;
+    --surface: #18181b;
+    --surface-soft: #1c1c21;
+    --surface-elevated: #27272a;
 
     /* Lines */
-    --border: #e2e8f0;
-    --border-strong: #cbd5e1;
+    --border: #27272a;
+    --border-strong: #3f3f46;
 
     /* Text */
-    --text: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
+    --text: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
 
     /* Accents */
-    --accent: #4338ca;
-    --accent-hover: #3730a3;
-    --accent-soft: #eef2ff;
-    --accent-border: #c7d2fe;
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-soft: rgba(129, 140, 248, 0.12);
+    --accent-border: rgba(129, 140, 248, 0.35);
 
-    --success: #059669;
-    --success-soft: #ecfdf5;
-    --success-border: #a7f3d0;
+    --success: #34d399;
+    --success-soft: rgba(52, 211, 153, 0.1);
+    --success-border: rgba(52, 211, 153, 0.3);
 
-    --warning: #d97706;
-    --danger: #dc2626;
-    --danger-soft: #fef2f2;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --danger-soft: rgba(248, 113, 113, 0.12);
 
-    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
-    --shadow: 0 4px 6px -1px rgba(15,23,42,0.06), 0 2px 4px -2px rgba(15,23,42,0.04);
-    --shadow-lg: 0 20px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04);
+    /* Section accent palette */
+    --c-indigo: #818cf8;
+    --c-emerald: #34d399;
+    --c-amber: #fbbf24;
+    --c-pink: #f472b6;
+    --c-cyan: #22d3ee;
+    --c-violet: #c084fc;
+    --c-rose: #fb7185;
+    --c-teal: #2dd4bf;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
+    --shadow-lg: 0 20px 40px -10px rgba(0,0,0,0.6), 0 8px 16px -6px rgba(0,0,0,0.4);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,6 +56,11 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 70% 60% at 15% 0%, rgba(129, 140, 248, 0.12), transparent 60%),
+      radial-gradient(ellipse 70% 60% at 85% 100%, rgba(52, 211, 153, 0.08), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 100% 0%, rgba(244, 114, 182, 0.06), transparent 60%);
+    background-attachment: fixed;
     color: var(--text);
     font-size: 15px;
     line-height: 1.5;
@@ -102,7 +118,7 @@
     align-items: center;
     gap: 10px;
     padding: 11px 20px;
-    background: #fff;
+    background: var(--surface-elevated);
     color: var(--text);
     border: 1px solid var(--border-strong);
     border-radius: 8px;
@@ -113,7 +129,7 @@
     transition: all 0.15s;
   }
 
-  .google-btn:hover { background: var(--surface-soft); border-color: var(--text-muted); }
+  .google-btn:hover { background: var(--surface-soft); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 
   .google-btn svg { width: 18px; height: 18px; }
 
@@ -143,7 +159,18 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-soft) 100%);
+    background:
+      linear-gradient(135deg, rgba(129,140,248,0.08) 0%, rgba(52,211,153,0.04) 100%),
+      var(--surface);
+    position: relative;
+  }
+
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-border), transparent);
   }
 
   .title-block h1 {
@@ -416,9 +443,21 @@
     border-radius: 3px;
     background: var(--accent);
     flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(129, 140, 248, 0.4);
   }
 
-  .section-card.is-done .section-marker { background: var(--success); }
+  /* Per-section accent colors based on section ID hash */
+  .section-card.color-0 .section-marker { background: var(--c-indigo);  box-shadow: 0 0 8px rgba(129,140,248,0.4); }
+  .section-card.color-1 .section-marker { background: var(--c-emerald); box-shadow: 0 0 8px rgba(52,211,153,0.4); }
+  .section-card.color-2 .section-marker { background: var(--c-amber);   box-shadow: 0 0 8px rgba(251,191,36,0.4); }
+  .section-card.color-3 .section-marker { background: var(--c-pink);    box-shadow: 0 0 8px rgba(244,114,182,0.4); }
+  .section-card.color-4 .section-marker { background: var(--c-cyan);    box-shadow: 0 0 8px rgba(34,211,238,0.4); }
+  .section-card.color-5 .section-marker { background: var(--c-violet);  box-shadow: 0 0 8px rgba(192,132,252,0.4); }
+  .section-card.color-6 .section-marker { background: var(--c-rose);    box-shadow: 0 0 8px rgba(251,113,133,0.4); }
+  .section-card.color-7 .section-marker { background: var(--c-teal);    box-shadow: 0 0 8px rgba(45,212,191,0.4); }
+
+  /* Done state always uses success green */
+  .section-card.is-done .section-marker { background: var(--success); box-shadow: 0 0 8px rgba(52,211,153,0.4); }
 
   .section-name {
     flex: 1;
@@ -616,9 +655,9 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .config-warning {
-    background: #fef3c7;
-    border: 1px solid #fcd34d;
-    color: #78350f;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: var(--warning);
     padding: 16px 20px;
     border-radius: 10px;
     font-size: 13px;
@@ -628,10 +667,11 @@
   }
 
   .config-warning code {
-    background: #fef9c3;
+    background: rgba(251, 191, 36, 0.15);
     padding: 1px 5px;
     border-radius: 3px;
     font-size: 12px;
+    color: var(--warning);
   }
 
   /* Mobile */
@@ -1012,9 +1052,16 @@
       return li;
     }
 
+    function sectionColorClass(id) {
+      let hash = 0;
+      for (let i = 0; i < id.length; i++) hash = (hash + id.charCodeAt(i) * (i + 1)) >>> 0;
+      return "color-" + (hash % 8);
+    }
+
     function makeSectionCard(section, sectionTasks, mode) {
       const card = document.createElement("div");
-      card.className = "section-card" + (mode === "done" ? " is-done" : "");
+      const colorCls = sectionColorClass(section.id);
+      card.className = "section-card " + colorCls + (mode === "done" ? " is-done" : "");
 
       const head = document.createElement("div");
       head.className = "section-head";
